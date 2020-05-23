@@ -39,7 +39,36 @@ public interface I_Integer extends I_RationalNumber {
 	 * @since 1
 	 * @version 1
 	 */
-	I_Integer o_add(I_Integer another);
+	default I_Integer o_add(I_Integer another) {
+		I_Integer a = this, b = another;
+		if(p_containNaN(a, b)) {
+			return NaN;
+		}
+		Sign sgna = a.p_getSign(), sgnb = b.p_getSign();
+		String stra = a.p_getAbsString(), strb = b.p_getAbsString();
+		if(sgna == Sign.NEUTRAL) {
+			return m_create(sgnb, strb);
+		}
+		if(sgnb == Sign.NEUTRAL) {
+			return m_create(sgna, stra);
+		}
+		if(sgna == sgnb) {
+			return m_create(sgna, Util_Integer.add(stra, strb));
+		}
+		String str = Util_Integer.sub(stra, strb);
+		Sign sgn = Sign.NEUTRAL;
+		if(str.equals("0")) {
+			return m_create(sgn, "0");
+		}
+		String lar = Util_Integer.greater(stra, strb);
+		if(lar.equals(stra)) {
+			sgn = sgna;
+		}
+		if(lar.equals(strb)) {
+			sgn = sgnb;
+		}
+		return m_create(sgn, str);
+	}
 	/**
 	 * 减法运算。 两个整数相减，应当还是一个整数。
 	 * 
@@ -49,7 +78,13 @@ public interface I_Integer extends I_RationalNumber {
 	 * @since 1
 	 * @version 1
 	 */
-	I_Integer o_sub(I_Integer another);
+	default I_Integer o_sub(I_Integer another) {
+		I_Integer a = this, b = another;
+		if(p_containNaN(a, b)) {
+			return NaN;
+		}
+		return null; // TODO unfinished
+	}
 	/**
 	 * 乘法运算。应当具有可交换性。 两个整数相乘，应当还是一个整数。
 	 * 
@@ -84,7 +119,7 @@ public interface I_Integer extends I_RationalNumber {
 	 */
 	I_RationalNumber o_div(I_Integer another);
 	/**
-	 * @return 该整数得相反数。
+	 * @return 该整数的相反数。
 	 * @since 1
 	 * @version 1
 	 */
@@ -337,10 +372,10 @@ class Util_Integer {
 		}
 		int lengthA = charsA.length, lengthB = charsB.length;
 		if(lengthA == 0) {
-			return add("0", b);
+			return mut("0", b);
 		}
 		if(lengthB == 0) {
-			return add(a, "0");
+			return mut(a, "0");
 		}
 		if(a.equals("0") || b.equals("0")) {
 			return "0";
@@ -371,6 +406,98 @@ class Util_Integer {
 		}
 		return r;
 	}
+	static String sub(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
+		int lengthA = charsA.length, lengthB = charsB.length;
+		if(lengthA == 0) {
+			return sub("0", b);
+		}
+		if(lengthB == 0) {
+			return sub(a, "0");
+		}
+		for(char c : charsA) {
+			if(!Character.isDigit(c)) {
+				return "NaN";
+			}
+		}
+		for(char c : charsB) {
+			if(!Character.isDigit(c)) {
+				return "NaN";
+			}
+		}
+		if(a.equals(b)) {
+			return "0";
+		}
+		if(a.equals("0")) {
+			return b;
+		}
+		if(b.equals("0")) {
+			return a;
+		}
+		if(!greater(a, b).equals(a)) {
+			return sub(b, a);
+		}
+		char[] revA = reverseCharArray(charsA), revB = reverseCharArray(charsB);
+		char[] revZ = new char[lengthA];
+		for(int i = 0; i < lengthA; i++) {
+			revZ[i] = revA[i];
+		}
+		int carry = 0;
+		for(int i = 0; i < lengthA; i++) {
+			char ca = revA[i], cb = '0';
+			if(i < lengthB) {
+				cb = revB[i];
+			}
+			int ia = char_int(ca), ib = char_int(cb);
+			ia += 10;
+			int iz = ia - ib - carry;
+			if(iz < 10) {
+				carry = 1;
+			}
+			else {
+				carry = 0;
+				iz -= 10;
+			}
+			char cz = int_char(iz);
+			revZ[i] = cz;
+		}
+		return removeStart0(charArray_string(reverseCharArray(revZ)));
+	}
+	static String greater(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
+		int lengthA = charsA.length, lengthB = charsB.length;
+		for(char c : charsA) {
+			if(!Character.isDigit(c)) {
+				return "NaN";
+			}
+		}
+		for(char c : charsB) {
+			if(!Character.isDigit(c)) {
+				return "NaN";
+			}
+		}
+		if(lengthA < lengthB) {
+			return b;
+		}
+		if(lengthA == lengthB) {
+			int l = lengthA;
+			for(int i = 0; i < l; i++) {
+				char ca = charsA[i], cb = charsB[i];
+				int ia = char_int(ca), ib = char_int(cb);
+				if(ia < ib) {
+					return b;
+				}
+				if(ia > ib) {
+					return a;
+				}
+			}
+		}
+		return a;
+	}
 	static String addEnd0(String string, int num0) {
 		for(int i = 0; i < num0; i++) {
 			string += "0";
@@ -381,7 +508,7 @@ class Util_Integer {
 		if(string.equals("0")) {
 			return string;
 		}
-		while(string.startsWith("0")) {
+		while(string.startsWith("0") && string.length() > 1) {
 			string = string.substring(1);
 		}
 		return string;
