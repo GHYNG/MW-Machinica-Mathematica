@@ -141,3 +141,6 @@ class C_Boolean implements I_Boolean {
 		return null;
 	}
 }
+class Util_Boolean {
+	
+}

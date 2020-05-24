@@ -1,11 +1,10 @@
 package org.mwage.math.core_components.algebra;
 import java.util.ArrayList;
 import java.util.List;
-import org.mwage.math.core_components.algebra.I_RealNumber.Sign;
 import org.mwage.math.core_components.logic.I_Boolean;
 import static org.mwage.math.core_components.Util_CommonConstantValues.*;
 /**
- * 代数系统中的整数。整数是整数的一种。
+ * 代数系统中的整数。整数是有理数的一种。
  * 
  * @author GHYNG
  * @since 1
@@ -58,7 +57,7 @@ public interface I_Integer extends I_RationalNumber {
 		String str = Util_Integer.sub(stra, strb);
 		Sign sgn = Sign.NEUTRAL;
 		if(str.equals("0")) {
-			return m_create(sgn, "0");
+			return m_create("0");
 		}
 		String lar = Util_Integer.greater(stra, strb);
 		if(lar.equals(stra)) {
@@ -83,7 +82,36 @@ public interface I_Integer extends I_RationalNumber {
 		if(p_containNaN(a, b)) {
 			return NaN;
 		}
-		return null; // TODO unfinished
+		Sign sgna = a.p_getSign(), sgnb = b.p_getSign();
+		String stra = a.p_getAbsString(), strb = b.p_getAbsString();
+		if(sgna == Sign.NEUTRAL) {
+			return b.o_inv();
+		}
+		if(sgnb == Sign.NEUTRAL) {
+			return a;
+		}
+		Sign sign = Sign.NEUTRAL;
+		String str = "0";
+		if(sgna != sgnb) {
+			sign = sgna;
+			str = Util_Integer.add(stra, strb);
+			return m_create(sign, str);
+		}
+		String lar = Util_Integer.greater(stra, strb);
+		if(stra.equals(strb)) {
+			return m_create("0");
+		}
+		str = Util_Integer.sub(stra, strb);
+		if(str.equals("0")) {
+			return m_create("0");
+		}
+		if(str.equals(stra)) {
+			sign = sgna;
+		}
+		if(str.equals(strb)) {
+			sign = sgnb;
+		}
+		return m_create(sign, str);
 	}
 	/**
 	 * 乘法运算。应当具有可交换性。 两个整数相乘，应当还是一个整数。
@@ -269,10 +297,14 @@ public interface I_Integer extends I_RationalNumber {
 	 * @version 1
 	 */
 	static I_Integer m_create(Sign sign, String absvalue) {
-		return null; // TODO unfinished.
+		if(!m_legal(absvalue)) {
+			return NaN;
+		}
+		// return new C_Integer(sign, absvalue);
+		return null; // TODO needs work on C_Integer
 	}
 }
-abstract class C_Integer implements I_Integer {
+abstract class C_Integer implements I_Integer { // TODO Unfinished.
 	final Sign sign;
 	final String value;
 	C_Integer(Sign sign, String value) {
