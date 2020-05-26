@@ -1,5 +1,6 @@
 package org.mwage.math.core_components.algebra;
 import static org.mwage.math.core_components.Util_CommonConstantValues.*;
+import org.mwage.math.core_components.E_Operator;
 import org.mwage.math.core_components.algebra.simple_operations.I_DivisionExpression;
 /**
  * 代数系统中的有理数。有理数是实数的一种。
@@ -165,9 +166,9 @@ public interface I_RationalNumber extends I_RealNumber, I_DivisionExpression {
 		Sign sign = p_getSign();
 		String str = "";
 		if(sign == Sign.NEGATIVE) {
-			str = operators.get("sub");
+			str = Util_RationalNumber.SUB;
 		}
-		String ope = operators.get("div");
+		String ope = Util_RationalNumber.DIV;
 		str += (p_getLeft().m_toFileString() + ope + p_getRight().m_toFileString());
 		return str;
 	}
@@ -254,4 +255,8 @@ public interface I_RationalNumber extends I_RealNumber, I_DivisionExpression {
 	static I_RationalNumber m_create(Sign sign, I_Integer numerator, I_Integer denominator) {
 		return null; // TODO unfinished.
 	}
+}
+class Util_RationalNumber {
+	static String SUB = E_Operator.SUB.m_toFileString();
+	static String DIV = E_Operator.DIV.m_toFileString();
 }

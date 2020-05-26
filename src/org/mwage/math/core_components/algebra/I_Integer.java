@@ -1,6 +1,8 @@
 package org.mwage.math.core_components.algebra;
 import java.util.ArrayList;
 import java.util.List;
+import org.mwage.math.core_components.E_Keyword;
+import org.mwage.math.core_components.E_Operator;
 import org.mwage.math.core_components.logic.I_Boolean;
 import static org.mwage.math.core_components.Util_CommonConstantValues.*;
 /**
@@ -223,12 +225,12 @@ public interface I_Integer extends I_RationalNumber {
 	@Override
 	default String m_toFileString() {
 		if(p_isNaN()) {
-			return "NaN";
+			return Util_Integer.NaN;
 		}
 		Sign sign = p_getSign();
 		String str = "";
 		if(sign == Sign.NEGATIVE) {
-			str = operators.get("sub");
+			str = Util_Integer.SUB;
 		}
 		str += p_getAbsString();
 		return str;
@@ -313,18 +315,21 @@ abstract class C_Integer implements I_Integer { // TODO Unfinished.
 	}
 }
 class Util_Integer {
+	static String NaN = E_Keyword.NaN.m_toFileString();
+	static String ADD = E_Operator.ADD.m_toFileString();
+	static String SUB = E_Operator.SUB.m_toFileString();
 	static String add(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
 		for(char c : charsA) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		for(char c : charsB) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		int lengthA = charsA.length, lengthB = charsB.length;
@@ -394,12 +399,12 @@ class Util_Integer {
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
 		for(char c : charsA) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		for(char c : charsB) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		int lengthA = charsA.length, lengthB = charsB.length;
@@ -451,12 +456,12 @@ class Util_Integer {
 		}
 		for(char c : charsA) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		for(char c : charsB) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		if(a.equals(b)) {
@@ -497,6 +502,55 @@ class Util_Integer {
 		}
 		return removeStart0(charArray_string(reverseCharArray(revZ)));
 	}
+	static String div(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
+		int lengthA = charsA.length, lengthB = charsB.length;
+		if(lengthA == 0) {
+			return div("0", b);
+		}
+		if(lengthB == 0) {
+			return div(a, "0");
+		}
+		for(char c : charsA) {
+			if(!Character.isDigit(c)) {
+				return NaN;
+			}
+		}
+		for(char c : charsB) {
+			if(!Character.isDigit(c)) {
+				return NaN;
+			}
+		}
+		if(b.equals("0")) {
+			return NaN;
+		}
+		if(a.equals("0")) {
+			return "0";
+		}
+		String lar = greater(a, b);
+		if(b.equals(lar)) {
+			return "0";
+		}
+		List<Character> resultList = new ArrayList<Character>();
+		List<Character> tempAList = new ArrayList<Character>();
+		for(int i = 0; i < lengthA; i++) {
+			tempAList.clear();
+			for(int j = i; j < lengthA; j++) {
+				tempAList.add(charsA[j]);
+				String tempA = charArray_string(charList_charArray(tempAList));
+				int localValue = 0;
+				while(greater(tempA, b).equals(tempA)) {
+					tempA = sub(tempA, b);
+					localValue++;
+				}
+				resultList.add(int_char(localValue));
+				i = j;
+			}
+		}
+		return removeStart0(charArray_string(charList_charArray(resultList)));
+	}
 	static String greater(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
@@ -504,12 +558,12 @@ class Util_Integer {
 		int lengthA = charsA.length, lengthB = charsB.length;
 		for(char c : charsA) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		for(char c : charsB) {
 			if(!Character.isDigit(c)) {
-				return "NaN";
+				return NaN;
 			}
 		}
 		if(lengthA < lengthB) {

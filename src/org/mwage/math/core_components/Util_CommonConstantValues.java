@@ -1,5 +1,4 @@
 package org.mwage.math.core_components;
-import java.util.HashMap;
 import org.mwage.math.core_components.logic.I_Boolean;
 /**
  * 一些常用的值。这个类不参与任何运算，只是一个储存表。
@@ -27,19 +26,4 @@ public final class Util_CommonConstantValues {
 	 * @since 1
 	 */
 	public static final I_Boolean FALSE = I_Boolean.FALSE;
-	/**
-	 * 一个储存运算符的哈希表。
-	 * 
-	 * @since 1
-	 */
-	public static final HashMap<String, String> operators = new HashMap<String, String>();
-	static {
-		operators.put("add", "+");
-		operators.put("sub", "-");
-		operators.put("mut", "*");
-		operators.put("div", "/");
-		operators.put("equ", "=");
-		operators.put("mor", ">");
-		operators.put("les", "<");
-	}
 }

@@ -2,6 +2,8 @@ package org.mwage.math.core_components.algebra;
 import org.mwage.math.core_components.I_BinaryOperator;
 import org.mwage.math.core_components.I_Expression;
 import static org.mwage.math.core_components.Util_CommonConstantValues.*;
+import static org.mwage.math.core_components.algebra.Util_ABO.*;
+import org.mwage.math.core_components.E_Operator;
 /**
  * 代数二元算符。
  * 
@@ -49,10 +51,14 @@ public interface I_AlgebraicBinaryOperator extends I_AlgebraicOperator, I_Binary
 class AddOperator implements I_AlgebraicBinaryOperator {
 	@Override
 	public String m_toFileString() {
-		return operators.get("add");
+		return ope_add;
 	}
 	@Override
 	public I_AlgebraicExpression p_operate(I_AlgebraicExpression a, I_AlgebraicExpression b) {
 		return a.o_add(b);
 	}
+}
+class Util_ABO { 
+	static String ope_add = E_Operator.ADD.m_toFileString();
+	
 }

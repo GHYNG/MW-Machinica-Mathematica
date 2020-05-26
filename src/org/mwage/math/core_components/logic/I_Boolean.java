@@ -2,6 +2,7 @@ package org.mwage.math.core_components.logic;
 import org.mwage.math.core_components.I_Expression;
 import org.mwage.math.core_components.I_Value;
 import static org.mwage.math.core_components.Util_CommonConstantValues.NaN;
+import org.mwage.math.core_components.E_Keyword;
 /**
  * 数学逻辑系统中的布尔值。
  * <p>
@@ -102,12 +103,12 @@ public interface I_Boolean extends I_LogicExpression, I_Value {
 	@Override
 	default String m_toFileString() {
 		if(this == TRUE) {
-			return "true";
+			return Util_Boolean.TRUE;
 		}
 		if(this == FALSE) {
-			return "false";
+			return Util_Boolean.FALSE;
 		}
-		return "NaN";
+		return Util_Boolean.NaN;
 	}
 }
 class C_Boolean implements I_Boolean {
@@ -142,5 +143,7 @@ class C_Boolean implements I_Boolean {
 	}
 }
 class Util_Boolean {
-	
+	static String TRUE = E_Keyword.TRUE.m_toFileString();
+	static String FALSE = E_Keyword.FALSE.m_toFileString();
+	static String NaN = E_Keyword.NaN.m_toFileString();
 }
