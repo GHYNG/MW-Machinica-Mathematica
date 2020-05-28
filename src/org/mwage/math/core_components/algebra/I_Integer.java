@@ -529,29 +529,65 @@ class Util_Integer {
 		if(a.equals("0")) {
 			return "0";
 		}
-		String lar = greater(a, b);
-		if(b.equals(lar)) {
-			return "0";
-		}
-		List<Character> resultList = new ArrayList<Character>();
-		List<Character> tempAList = new ArrayList<Character>();
-		for(int i = 0; i < lengthA; i++) {
-			tempAList.clear();
-			for(int j = i; j < lengthA; j++) {
-				tempAList.add(charsA[j]);
-				String tempA = charArray_string(charList_charArray(tempAList));
-				int localValue = 0;
-				while(greater(tempA, b).equals(tempA)) {
-					tempA = sub(tempA, b);
-					localValue++;
-				}
-				resultList.add(int_char(localValue));
-				i = j;
+		{
+			String lar = greater(a, b);
+			if(b.equals(lar)) {
+				return "0";
 			}
 		}
-		return removeStart0(charArray_string(charList_charArray(resultList)));
+		char[] charsZ = new char[lengthA];
+		for(int i = 0; i < lengthA; i++) {
+			charsZ[i] = '0';
+		}
+		String tempA = a, tempB = b;
+		for(int i = 0; i < lengthA; i++) {
+			int num0s = lengthA - lengthB - i;
+			if(num0s >= 0) {
+				tempB = addEnd0(b, num0s);
+				int localValue = 0;
+				System.out.println(tempA + " - " + tempB);
+				while(greater(tempA, tempB).equals(tempA)) {
+					tempA = sub(tempA, tempB);
+					localValue++;
+				}
+				charsZ[lengthA - num0s - 1] = int_char(localValue);
+			}
+		}
+		return removeStart0(charArray_string(charsZ));
+	}
+	static String rem(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
+		int lengthA = charsA.length, lengthB = charsB.length;
+		if(lengthA == 0) {
+			return rem("0", b);
+		}
+		if(lengthB == 0) {
+			return rem(a, "0");
+		}
+		for(char c : charsA) {
+			if(!Character.isDigit(c)) {
+				return NaN;
+			}
+		}
+		for(char c : charsB) {
+			if(!Character.isDigit(c)) {
+				return NaN;
+			}
+		}
+		if(b.equals("0")) {
+			return NaN;
+		}
+		if(a.equals("0")) {
+			return "0";
+		}
+		String sub = sub(a, b);
+		String rem = sub(a, mut(sub, b));
+		return rem;
 	}
 	static String greater(String a, String b) {
+		// System.out.println("greater(\"" + a + "\", \"" + b + "\")");
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
@@ -621,6 +657,9 @@ class Util_Integer {
 			arr[i] = list.get(i);
 		}
 		return arr;
+	}
+	static String charList_string(List<Character> list) {
+		return charArray_string(charList_charArray(list));
 	}
 	static int char_int(char c) {
 		switch(c) {
