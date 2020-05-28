@@ -545,7 +545,6 @@ class Util_Integer {
 			if(num0s >= 0) {
 				tempB = addEnd0(b, num0s);
 				int localValue = 0;
-				System.out.println(tempA + " - " + tempB);
 				while(greater(tempA, tempB).equals(tempA)) {
 					tempA = sub(tempA, tempB);
 					localValue++;
@@ -587,7 +586,6 @@ class Util_Integer {
 		return rem;
 	}
 	static String greater(String a, String b) {
-		// System.out.println("greater(\"" + a + "\", \"" + b + "\")");
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
