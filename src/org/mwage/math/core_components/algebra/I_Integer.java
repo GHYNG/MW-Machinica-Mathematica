@@ -529,12 +529,6 @@ class Util_Integer {
 		if(a.equals("0")) {
 			return "0";
 		}
-		{
-			String lar = greater(a, b);
-			if(b.equals(lar)) {
-				return "0";
-			}
-		}
 		char[] charsZ = new char[lengthA];
 		for(int i = 0; i < lengthA; i++) {
 			charsZ[i] = '0';
