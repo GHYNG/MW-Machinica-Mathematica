@@ -1,4 +1,4 @@
-#MW Machinica Mathematica
+# MW Machinica Mathematica
 
 这是一个正在制作的数学工具，它旨在将数学概念程序化，并且可以互相交互并计算。
 如果您对这个项目有任何建议，请发出Issue。
