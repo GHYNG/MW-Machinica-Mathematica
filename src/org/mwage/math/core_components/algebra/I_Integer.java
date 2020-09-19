@@ -318,19 +318,13 @@ class Util_Integer {
 	static String NaN = E_Keyword.NaN.m_toFileString();
 	static String ADD = E_Operator.ADD.m_toFileString();
 	static String SUB = E_Operator.SUB.m_toFileString();
+	static String MOD = "_MOD_SEP_";
 	static String add(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
 		}
 		int lengthA = charsA.length, lengthB = charsB.length;
 		if(lengthA == 0) {
@@ -397,15 +391,8 @@ class Util_Integer {
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
 		}
 		int lengthA = charsA.length, lengthB = charsB.length;
 		if(lengthA == 0) {
@@ -454,15 +441,8 @@ class Util_Integer {
 		if(lengthB == 0) {
 			return sub(a, "0");
 		}
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
 		}
 		if(a.equals(b)) {
 			return "0";
@@ -503,6 +483,20 @@ class Util_Integer {
 		return removeStart0(charArray_string(reverseCharArray(revZ)));
 	}
 	static String div(String a, String b) {
+		String result = divmod(a, b);
+		if(result.equals(NaN)) {
+			return NaN;
+		}
+		return result.split(MOD)[0];
+	}
+	static String mod(String a, String b) {
+		String result = divmod(a, b);
+		if(result.equals(NaN)) {
+			return NaN;
+		}
+		return result.split(MOD)[1];
+	}
+	static String divmod(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
@@ -513,15 +507,8 @@ class Util_Integer {
 		if(lengthB == 0) {
 			return div(a, "0");
 		}
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
 		}
 		if(b.equals("0")) {
 			return NaN;
@@ -546,53 +533,40 @@ class Util_Integer {
 				charsZ[lengthA - num0s - 1] = int_char(localValue);
 			}
 		}
-		return removeStart0(charArray_string(charsZ));
+		String strDiv = removeStart0(charArray_string(charsZ));
+		String strRem = sub(a, mut(strDiv, b));
+		String strRet = strDiv + MOD + strRem;
+		return strRet;
 	}
-	static String rem(String a, String b) {
+	static String[] rational_div(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
-		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
-		int lengthA = charsA.length, lengthB = charsB.length;
-		if(lengthA == 0) {
-			return rem("0", b);
+		String[] results = new String[2];
+		results[0] = NaN;
+		results[1] = NaN;
+		if(!(isNumber(a) || isNumber(b))) {
+			return results;
 		}
-		if(lengthB == 0) {
-			return rem(a, "0");
+		if(mod(a, b).equals("0")) {
+			results[0] = div(a, b);
+			results[1] = "1";
+			return results;
 		}
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
-		}
-		if(b.equals("0")) {
-			return NaN;
-		}
-		if(a.equals("0")) {
-			return "0";
-		}
-		String sub = sub(a, b);
-		String rem = sub(a, mut(sub, b));
-		return rem;
+		return results;
 	}
 	static String greater(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
 		char[] charsA = a.toCharArray(), charsB = b.toCharArray();
 		int lengthA = charsA.length, lengthB = charsB.length;
-		for(char c : charsA) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
 		}
-		for(char c : charsB) {
-			if(!Character.isDigit(c)) {
-				return NaN;
-			}
+		if(lengthA == 0) {
+			return greater("0", b);
+		}
+		if(lengthB == 0) {
+			return greater(a, "b");
 		}
 		if(lengthA < lengthB) {
 			return b;
@@ -611,6 +585,88 @@ class Util_Integer {
 			}
 		}
 		return a;
+	}
+	static String smaller(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		if(a.equals("")) {
+			return smaller("0", b);
+		}
+		if(b.equals("")) {
+			return smaller(a, "0");
+		}
+		if(!(isNumber(a) || isNumber(b))) {
+			return NaN;
+		}
+		return greater(a, b).equals(a) ? b : a;
+	}
+	static boolean isFactorOf(String a, String b) {
+		a = removeStart0(a);
+		b = removeStart0(b);
+		if(a.equals("") || a.equals("0")) {
+			return false;
+		}
+		if(b.equals("") || b.equals("0")) {
+			return true;
+		}
+		return mod(b, a).equals("0");
+	}
+	static String nextPrimeNumber(String a) {
+		a = removeStart0(a);
+		if(!isNumber(a)) {
+			return NaN;
+		}
+		if(a.equals("0") || a.equals("1")) {
+			return "2";
+		}
+		String tester = a;
+		if(mod(tester, "2").equals("0")) {
+			tester = add(tester, "1");
+		}
+		else {
+			tester = add(tester, "2");
+		}
+		while(!isPrimeNumber(tester)) {
+			tester = add(tester, "2");
+		}
+		return tester;
+	}
+	static boolean isPrimeNumber(String a) {
+		a = removeStart0(a);
+		if(!isNumber(a)) {
+			return false;
+		}
+		if(a.equals("0") || a.equals("1")) {
+			return false;
+		}
+		if(a.equals("2") || a.equals("3")) {
+			return true;
+		}
+		String tester = "2";
+		String half = div(a, "2");
+		if(!greater(half, tester).equals(half)) {
+			return false;
+		}
+		while(greater(half, tester).equals(half)) {
+			if(mod(a, tester).equals("0")) {
+				return false;
+			}
+			else {
+				tester = add(tester, "1");
+			}
+		}
+		return true;
+	}
+	static boolean isNumber(String a) {
+		if(a.length() == 0) {
+			return false;
+		}
+		for(char c : a.toCharArray()) {
+			if(!Character.isDigit(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	static String addEnd0(String string, int num0) {
 		for(int i = 0; i < num0; i++) {
@@ -708,5 +764,13 @@ class Util_Integer {
 				return '9';
 		}
 		return '0';
+	}
+}
+class Util_Integer_RationalNumber {
+	String up;
+	String dn;
+	Util_Integer_RationalNumber(String up, String dn) {
+		up = Util_Integer.removeStart0(up);
+		dn = Util_Integer.removeStart0(dn);
 	}
 }
