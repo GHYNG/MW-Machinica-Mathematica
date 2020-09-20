@@ -255,6 +255,27 @@ public interface I_RationalNumber extends I_RealNumber, I_DivisionExpression {
 	static I_RationalNumber m_create(Sign sign, I_Integer numerator, I_Integer denominator) {
 		return null; // TODO unfinished.
 	}
+	/**
+	 * 根据给定的符号和两个整数，创建一个有理数值。
+	 * 有理数的定义即为两个整数的比值。
+	 * <p>
+	 * 给定的字符串必须是纯数字，有理数值的符号由sign指定。
+	 * 如果符号为中性，则有限创建整数0.
+	 * 如果分母为0，则优先创建NaN值。
+	 * 
+	 * @param sign
+	 *            符号。
+	 * @param numerator
+	 *            分子字符串。
+	 * @param denominator
+	 *            分母字符串。
+	 * @return 创建的有理数值。
+	 * @since 1
+	 * @version 1
+	 */
+	static I_RationalNumber m_create(Sign sign, String numerator, String denominator) {
+		return null; // TODO unfinished.
+	}
 }
 class Util_RationalNumber {
 	static String SUB = E_Operator.SUB.m_toFileString();

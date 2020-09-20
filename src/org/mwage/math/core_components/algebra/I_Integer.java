@@ -147,7 +147,28 @@ public interface I_Integer extends I_RationalNumber {
 	 * @since 1
 	 * @version 1
 	 */
-	I_RationalNumber o_div(I_Integer another);
+	default I_RationalNumber o_div(I_Integer another) {
+		I_Integer a = this, b = another;
+		if(p_containNaN(a, b)) {
+			return NaN;
+		}
+		Sign sa = a.p_getSign(), sb = b.p_getSign();
+		Sign sign = sa.o_mut(sb);
+		String stra = a.p_getAbsString(), strb = b.p_getAbsString();
+		if(strb.equals("0")) {
+			return NaN;
+		}
+		String result = Util_Integer.rational_div(stra, strb);
+		String[] results = result.split(Util_Integer.RAT_DIV);
+		String up = results[0], dn = results[1];
+		if(up.equals("0")) {
+			return m_create("0");
+		}
+		if(dn.equals("1")) {
+			return m_create(sign, up);
+		}
+		return I_RationalNumber.m_create(sign, up, dn);
+	}
 	/**
 	 * @return 该整数的相反数。
 	 * @since 1
@@ -315,10 +336,11 @@ abstract class C_Integer implements I_Integer { // TODO Unfinished.
 	}
 }
 class Util_Integer {
-	static String NaN = E_Keyword.NaN.m_toFileString();
-	static String ADD = E_Operator.ADD.m_toFileString();
-	static String SUB = E_Operator.SUB.m_toFileString();
-	static String MOD = "_MOD_SEP_";
+	final static String NaN = E_Keyword.NaN.m_toFileString();
+	final static String ADD = E_Operator.ADD.m_toFileString();
+	final static String SUB = E_Operator.SUB.m_toFileString();
+	final static String MOD = "_MOD_SEP_";
+	final static String RAT_DIV = "_RAT_DIV_";
 	static String add(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
@@ -538,21 +560,41 @@ class Util_Integer {
 		String strRet = strDiv + MOD + strRem;
 		return strRet;
 	}
-	static String[] rational_div(String a, String b) {
+	static String rational_div(String a, String b) {
 		a = removeStart0(a);
 		b = removeStart0(b);
-		String[] results = new String[2];
-		results[0] = NaN;
-		results[1] = NaN;
 		if(!(isNumber(a) || isNumber(b))) {
-			return results;
+			return NaN;
 		}
-		if(mod(a, b).equals("0")) {
-			results[0] = div(a, b);
-			results[1] = "1";
-			return results;
+		List<String> factorsA = factor(a);
+		List<String> factorsB = factor(b);
+		for(String factorA : factorsA) {
+			for(String factorB : factorsB) {
+				if(factorA.equals(factorB)) {
+					a = div(a, factorA);
+					b = div(b, factorB);
+					factorsB.remove(factorB);
+					break;
+				}
+			}
 		}
-		return results;
+		return a + RAT_DIV + b;
+	}
+	static List<String> factor(String a) {
+		List<String> factors = new ArrayList<String>();
+		a = removeStart0(a);
+		if(!isNumber(a)) {
+			return factors;
+		}
+		String prime = "2";
+		while(smaller(prime, a).equals(prime)) {
+			while(isFactorOf(prime, a)) {
+				factors.add(prime);
+				a = div(a, prime);
+			}
+			prime = nextPrimeNumber(prime);
+		}
+		return factors;
 	}
 	static String greater(String a, String b) {
 		a = removeStart0(a);
